@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import PricingSection from "@/components/PricingSection";
+import { PricingTable } from "@clerk/nextjs";
 
 function MockUI({ rows = 3 }) {
   const widths = ["w-4/5", "w-3/5", "w-2/5", "w-4/5", "w-1/2"];
@@ -325,7 +326,18 @@ export default function LandingPage() {
           </p>
         </div>
 
-        <PricingSection />
+        {/* <PricingSection /> */}
+        <PricingTable
+  checkoutProps={{
+    appearance: {
+      elements: {
+        drawerRoot: {
+          zIndex: 2000,
+        },
+      },
+    },
+  }}
+/>
       </section>
 
       {/* CTA */}

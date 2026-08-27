@@ -8,6 +8,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import PricingSection from "./PricingSection";
+import { PricingTable } from "@clerk/nextjs";
 import { AlertCircle } from "lucide-react";
 
 export default function UpgradeModal({ open, onOpenChange, reason }) {
@@ -32,8 +33,18 @@ export default function UpgradeModal({ open, onOpenChange, reason }) {
 
         {/* PricingSection or any children slot in here */}
         <div className="px-2 pb-6">
-          <PricingSection />
-        </div>
+  <PricingTable
+    checkoutProps={{
+      appearance: {
+        elements: {
+          drawerRoot: {
+            zIndex: 2000,
+          },
+        },
+      },
+    }}
+  />
+</div>
       </DialogContent>
     </Dialog>
   );

@@ -1,3 +1,240 @@
+// "use client";
+
+// import { useState, useEffect } from "react";
+// import { useRouter } from "next/navigation";
+// import { GoldTitle, GrayTitle, SectionLabel } from "@/components/reusables";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { Textarea } from "@/components/ui/textarea";
+// import { Label } from "@/components/ui/label";
+// import { completeOnboarding } from "@/actions/onboarding";
+// import useFetch from "@/hooks/use-fetch";
+// import { CATEGORIES, ONBOARDING_ROLES, YEARS_OPTIONS } from "@/lib/data";
+
+// export default function OnboardingPage() {
+//   const router = useRouter();
+
+//   const { data, loading, fn: onboardingFn } = useFetch(completeOnboarding);
+
+//   const [role, setRole] = useState(null);
+//   const [form, setForm] = useState({
+//     title: "",
+//     company: "",
+//     yearsExp: "",
+//     bio: "",
+//     categories: [],
+//   });
+
+//   useEffect(() => {
+//     if (data && !loading) {
+//       router.push(role === "INTERVIEWER" ? "/dashboard" : "/explore");
+//     }
+//   }, [data, router]);
+
+//   const toggleCategory = (val) => {
+//     setForm((prev) => ({
+//       ...prev,
+//       categories: prev.categories.includes(val)
+//         ? prev.categories.filter((c) => c !== val)
+//         : [...prev.categories, val],
+//     }));
+//   };
+
+//   const isInterviewerValid =
+//     form.title.trim() &&
+//     form.company.trim() &&
+//     form.yearsExp &&
+//     form.bio.trim() &&
+//     form.categories.length > 0;
+
+//   const canSubmit =
+//     role === "INTERVIEWEE" || (role === "INTERVIEWER" && isInterviewerValid);
+
+//   const handleSubmit = () => {
+//     if (!canSubmit) return;
+
+//     onboardingFn({
+//       role,
+//       ...(role === "INTERVIEWER" && {
+//         title: form.title,
+//         company: form.company,
+//         yearsExp: Number(form.yearsExp),
+//         bio: form.bio,
+//         categories: form.categories,
+//       }),
+//     });
+//   };
+
+//   return (
+//     <main className="min-h-screen bg-black px-6 py-24 flex flex-col items-center">
+//       <div className="w-full max-w-2xl">
+//         {/* Heading */}
+//         <div className="text-center mb-10">
+//           <SectionLabel>Welcome</SectionLabel>
+//           <h1 className="font-serif text-5xl leading-tight tracking-tighter mt-1">
+//             <GrayTitle>How will you be</GrayTitle>
+//             <br />
+//             <GoldTitle>using Prept?</GoldTitle>
+//           </h1>
+//           <p className="text-sm text-stone-500 font-light mt-4 leading-relaxed">
+//             This helps us personalise your experience.
+//             <span className="text-stone-600">
+//               {" "}
+//               You can&apos;t change this later.
+//             </span>
+//           </p>
+//         </div>
+
+//         {!role && (
+//           <div className="grid grid-cols-2 gap-4 w-full">
+//             {ONBOARDING_ROLES.map((r) => (
+//               <button
+//                 key={r.value}
+//                 type="button"
+//                 onClick={() => setRole(r.value)}
+//                 className="text-left rounded-2xl p-8 border border-white/10 bg-[#0f0f11] hover:border-amber-400/20 hover:-translate-y-0.5 transition-all duration-300"
+//               >
+//                 <span className="w-11 h-11 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-xl mb-5">
+//                   {r.icon}
+//                 </span>
+//                 <h3 className="font-serif text-xl tracking-tight mb-3 text-stone-100">
+//                   {r.title}
+//                 </h3>
+//                 <p className="text-sm text-stone-400 font-light leading-relaxed">
+//                   {r.desc}
+//                 </p>
+//               </button>
+//             ))}
+//           </div>
+//         )}
+
+//         {role && (
+//           <div className="flex flex-col gap-6">
+//             {/* role strip */}
+//             <div className="flex items-center justify-between bg-[#0f0f11] border border-white/10 rounded-2xl px-6 py-4">
+//               <div className="flex items-center gap-3">
+//                 <span className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-base shrink-0">
+//                   {ONBOARDING_ROLES.find((r) => r.value === role)?.icon}
+//                 </span>
+//                 <div>
+//                   <p className="text-sm font-medium text-stone-200">
+//                     {ONBOARDING_ROLES.find((r) => r.value === role)?.title}
+//                   </p>
+//                   <p className="text-xs text-stone-600 mt-0.5">Selected role</p>
+//                 </div>
+//               </div>
+//               <Button variant="outline" size="sm" onClick={() => setRole(null)}>
+//                 Change
+//               </Button>
+//             </div>
+
+//             {/* interviewer form */}
+//             {role === "INTERVIEWER" && (
+//               <div className="bg-[#0f0f11] border border-white/10 rounded-2xl p-8 flex flex-col gap-6">
+//                 {/* Title + Company */}
+//                 <div className="grid grid-cols-2 gap-4">
+//                   <div className="flex flex-col gap-2">
+//                     <Label htmlFor="title">Current title</Label>
+//                     <Input
+//                       id="title"
+//                       placeholder="Senior Software Engineer"
+//                       value={form.title}
+//                       onChange={(e) =>
+//                         setForm((p) => ({ ...p, title: e.target.value }))
+//                       }
+//                     />
+//                   </div>
+
+//                   <div className="flex flex-col gap-2">
+//                     <Label htmlFor="company">Company</Label>
+//                     <Input
+//                       id="company"
+//                       placeholder="Google, Meta, Startup…"
+//                       value={form.company}
+//                       onChange={(e) =>
+//                         setForm((p) => ({ ...p, company: e.target.value }))
+//                       }
+//                     />
+//                   </div>
+//                 </div>
+
+//                 {/* years */}
+//                 <div className="flex flex-wrap gap-2">
+//                   {YEARS_OPTIONS.map((opt) => (
+//                     <button
+//                       key={opt.value}
+//                       type="button"
+//                       onClick={() =>
+//                         setForm((p) => ({ ...p, yearsExp: opt.value }))
+//                       }
+//                       className={`text-xs px-4 py-2 rounded-lg border ${
+//                         form.yearsExp === opt.value
+//                           ? "border-amber-400/40 bg-amber-400/10 text-amber-400"
+//                           : "border-white/10 text-stone-500"
+//                       }`}
+//                     >
+//                       {opt.label}
+//                     </button>
+//                   ))}
+//                 </div>
+
+//                 {/* categories */}
+//                 <div className="flex flex-wrap gap-2">
+//                   {CATEGORIES.map((cat) => {
+//                     if (!cat?.value) return null;
+
+//                     const active = form.categories.includes(cat.value);
+
+//                     return (
+//                       <button
+//                         key={cat.value}
+//                         type="button"
+//                         onClick={() => toggleCategory(cat.value)}
+//                         className={`text-xs px-4 py-2 rounded-lg border ${
+//                           active
+//                             ? "border-amber-400/40 bg-amber-400/10 text-amber-400"
+//                             : "border-white/10 text-stone-500"
+//                         }`}
+//                       >
+//                         {cat.label}
+//                       </button>
+//                     );
+//                   })}
+//                 </div>
+
+//                 {/* bio */}
+//                 <Textarea
+//                   rows={4}
+//                   maxLength={300}
+//                   placeholder="Tell interviewees about your background, what you specialise in, and what they can expect from a session with you."
+//                   value={form.bio}
+//                   onChange={(e) =>
+//                     setForm((p) => ({ ...p, bio: e.target.value }))
+//                   }
+//                 />
+//               </div>
+//             )}
+
+//             <Button
+//               variant="gold"
+//               size="hero"
+//               className="w-full"
+//               disabled={!canSubmit || loading}
+//               onClick={handleSubmit}
+//             >
+//               {loading
+//                 ? "Setting up your account…"
+//                 : role === "INTERVIEWER"
+//                 ? "Create interviewer profile →"
+//                 : "Go to dashboard →"}
+//             </Button>
+//           </div>
+//         )}
+//       </div>
+//     </main>
+//   );
+// }
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -17,6 +254,12 @@ export default function OnboardingPage() {
   const { data, loading, fn: onboardingFn } = useFetch(completeOnboarding);
 
   const [role, setRole] = useState(null);
+
+  // IMPORTANT:
+  // This prevents existing/stale `data` from automatically
+  // redirecting the user when the page first loads.
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+
   const [form, setForm] = useState({
     title: "",
     company: "",
@@ -25,11 +268,23 @@ export default function OnboardingPage() {
     categories: [],
   });
 
+  /*
+   * Only redirect AFTER:
+   * 1. User clicked the final button
+   * 2. completeOnboarding returned successfully
+   * 3. loading has finished
+   */
   useEffect(() => {
-    if (data && !loading) {
-      router.push(role === "INTERVIEWER" ? "/dashboard" : "/explore");
+    if (!hasSubmitted || loading || !data) {
+      return;
     }
-  }, [data, router]);
+
+    if (role === "INTERVIEWER") {
+      router.push("/dashboard");
+    } else if (role === "INTERVIEWEE") {
+      router.push("/explore");
+    }
+  }, [hasSubmitted, data, loading, role, router]);
 
   const toggleCategory = (val) => {
     setForm((prev) => ({
@@ -48,13 +303,24 @@ export default function OnboardingPage() {
     form.categories.length > 0;
 
   const canSubmit =
-    role === "INTERVIEWEE" || (role === "INTERVIEWER" && isInterviewerValid);
+    role === "INTERVIEWEE" ||
+    (role === "INTERVIEWER" && isInterviewerValid);
 
   const handleSubmit = () => {
-    if (!canSubmit) return;
+    if (!canSubmit || loading) {
+      return;
+    }
+
+    /*
+     * This is the ONLY place where hasSubmitted becomes true.
+     * Therefore simply opening the page or selecting a role
+     * cannot trigger the redirect.
+     */
+    setHasSubmitted(true);
 
     onboardingFn({
       role,
+
       ...(role === "INTERVIEWER" && {
         title: form.title,
         company: form.company,
@@ -65,17 +331,28 @@ export default function OnboardingPage() {
     });
   };
 
+  const handleChangeRole = () => {
+    setRole(null);
+
+    // Reset submission state so changing the role
+    // cannot trigger an old redirect.
+    setHasSubmitted(false);
+  };
+
   return (
     <main className="min-h-screen bg-black px-6 py-24 flex flex-col items-center">
       <div className="w-full max-w-2xl">
+
         {/* Heading */}
         <div className="text-center mb-10">
           <SectionLabel>Welcome</SectionLabel>
+
           <h1 className="font-serif text-5xl leading-tight tracking-tighter mt-1">
             <GrayTitle>How will you be</GrayTitle>
             <br />
             <GoldTitle>using Prept?</GoldTitle>
           </h1>
+
           <p className="text-sm text-stone-500 font-light mt-4 leading-relaxed">
             This helps us personalise your experience.
             <span className="text-stone-600">
@@ -85,21 +362,30 @@ export default function OnboardingPage() {
           </p>
         </div>
 
+        {/* =========================================================
+            STEP 1 — CHOOSE ROLE
+        ========================================================= */}
+
         {!role && (
           <div className="grid grid-cols-2 gap-4 w-full">
             {ONBOARDING_ROLES.map((r) => (
               <button
                 key={r.value}
                 type="button"
-                onClick={() => setRole(r.value)}
+                onClick={() => {
+                  setRole(r.value);
+                  setHasSubmitted(false);
+                }}
                 className="text-left rounded-2xl p-8 border border-white/10 bg-[#0f0f11] hover:border-amber-400/20 hover:-translate-y-0.5 transition-all duration-300"
               >
                 <span className="w-11 h-11 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-xl mb-5">
                   {r.icon}
                 </span>
+
                 <h3 className="font-serif text-xl tracking-tight mb-3 text-stone-100">
                   {r.title}
                 </h3>
+
                 <p className="text-sm text-stone-400 font-light leading-relaxed">
                   {r.desc}
                 </p>
@@ -108,64 +394,106 @@ export default function OnboardingPage() {
           </div>
         )}
 
+        {/* =========================================================
+            STEP 2 — ROLE SELECTED
+        ========================================================= */}
+
         {role && (
           <div className="flex flex-col gap-6">
-            {/* role strip */}
+
+            {/* Role strip */}
             <div className="flex items-center justify-between bg-[#0f0f11] border border-white/10 rounded-2xl px-6 py-4">
               <div className="flex items-center gap-3">
+
                 <span className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-base shrink-0">
-                  {ONBOARDING_ROLES.find((r) => r.value === role)?.icon}
+                  {ONBOARDING_ROLES.find(
+                    (r) => r.value === role
+                  )?.icon}
                 </span>
+
                 <div>
                   <p className="text-sm font-medium text-stone-200">
-                    {ONBOARDING_ROLES.find((r) => r.value === role)?.title}
+                    {ONBOARDING_ROLES.find(
+                      (r) => r.value === role
+                    )?.title}
                   </p>
-                  <p className="text-xs text-stone-600 mt-0.5">Selected role</p>
+
+                  <p className="text-xs text-stone-600 mt-0.5">
+                    Selected role
+                  </p>
                 </div>
+
               </div>
-              <Button variant="outline" size="sm" onClick={() => setRole(null)}>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleChangeRole}
+              >
                 Change
               </Button>
             </div>
 
-            {/* interviewer form */}
+            {/* =====================================================
+                INTERVIEWER FORM
+            ===================================================== */}
+
             {role === "INTERVIEWER" && (
               <div className="bg-[#0f0f11] border border-white/10 rounded-2xl p-8 flex flex-col gap-6">
+
                 {/* Title + Company */}
                 <div className="grid grid-cols-2 gap-4">
+
                   <div className="flex flex-col gap-2">
-                    <Label htmlFor="title">Current title</Label>
+                    <Label htmlFor="title">
+                      Current title
+                    </Label>
+
                     <Input
                       id="title"
                       placeholder="Senior Software Engineer"
                       value={form.title}
                       onChange={(e) =>
-                        setForm((p) => ({ ...p, title: e.target.value }))
+                        setForm((p) => ({
+                          ...p,
+                          title: e.target.value,
+                        }))
                       }
                     />
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <Label htmlFor="company">Company</Label>
+                    <Label htmlFor="company">
+                      Company
+                    </Label>
+
                     <Input
                       id="company"
                       placeholder="Google, Meta, Startup…"
                       value={form.company}
                       onChange={(e) =>
-                        setForm((p) => ({ ...p, company: e.target.value }))
+                        setForm((p) => ({
+                          ...p,
+                          company: e.target.value,
+                        }))
                       }
                     />
                   </div>
+
                 </div>
 
-                {/* years */}
+                {/* Years of experience */}
                 <div className="flex flex-wrap gap-2">
                   {YEARS_OPTIONS.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
                       onClick={() =>
-                        setForm((p) => ({ ...p, yearsExp: opt.value }))
+                        setForm((p) => ({
+                          ...p,
+                          yearsExp: opt.value,
+                        }))
                       }
                       className={`text-xs px-4 py-2 rounded-lg border ${
                         form.yearsExp === opt.value
@@ -178,18 +506,21 @@ export default function OnboardingPage() {
                   ))}
                 </div>
 
-                {/* categories */}
+                {/* Categories */}
                 <div className="flex flex-wrap gap-2">
                   {CATEGORIES.map((cat) => {
                     if (!cat?.value) return null;
 
-                    const active = form.categories.includes(cat.value);
+                    const active =
+                      form.categories.includes(cat.value);
 
                     return (
                       <button
                         key={cat.value}
                         type="button"
-                        onClick={() => toggleCategory(cat.value)}
+                        onClick={() =>
+                          toggleCategory(cat.value)
+                        }
                         className={`text-xs px-4 py-2 rounded-lg border ${
                           active
                             ? "border-amber-400/40 bg-amber-400/10 text-amber-400"
@@ -202,20 +533,29 @@ export default function OnboardingPage() {
                   })}
                 </div>
 
-                {/* bio */}
+                {/* Bio */}
                 <Textarea
                   rows={4}
                   maxLength={300}
                   placeholder="Tell interviewees about your background, what you specialise in, and what they can expect from a session with you."
                   value={form.bio}
                   onChange={(e) =>
-                    setForm((p) => ({ ...p, bio: e.target.value }))
+                    setForm((p) => ({
+                      ...p,
+                      bio: e.target.value,
+                    }))
                   }
                 />
+
               </div>
             )}
 
+            {/* =====================================================
+                FINAL SUBMIT BUTTON
+            ===================================================== */}
+
             <Button
+              type="button"
               variant="gold"
               size="hero"
               className="w-full"
@@ -226,10 +566,12 @@ export default function OnboardingPage() {
                 ? "Setting up your account…"
                 : role === "INTERVIEWER"
                 ? "Create interviewer profile →"
-                : "Go to dashboard →"}
+                : "Continue to explore →"}
             </Button>
+
           </div>
         )}
+
       </div>
     </main>
   );
